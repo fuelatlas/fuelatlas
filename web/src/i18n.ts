@@ -124,7 +124,7 @@ const en: Dict = {
 
 const DICTS: Record<Lang, Dict> = { de, en };
 
-let current: Lang = "de";
+let current: Lang = "en";
 
 export function setLang(lang: Lang): void {
   current = lang;

@@ -342,7 +342,9 @@ function applyUrl(): void {
   const params = new URLSearchParams(location.search);
   const urlLang = params.get("lang");
   const stored = localStorage.getItem("lang");
-  setLang((urlLang ?? stored ?? navigatorLang()) === "en" ? "en" : "de");
+  // Anything we cannot place — an unknown ?lang=, a stale stored value — is
+  // English, which is the safer guess for a reader we know nothing about.
+  setLang((urlLang ?? stored ?? navigatorLang()) === "de" ? "de" : "en");
 
   const product = params.get("product");
   if (product && latest.products.some((entry) => entry.key === product)) state.product = product;
@@ -352,8 +354,17 @@ function applyUrl(): void {
   if (country && latest.countries[country]) state.country = country;
 }
 
+// The whole preference list, not just its first entry: a browser set to a
+// language the site does not speak — Swiss German, say — may still rank German
+// second, and that reader is better served in German than in English.
 function navigatorLang(): Lang {
-  return navigator.language.startsWith("de") ? "de" : "en";
+  const preferred = navigator.languages?.length ? navigator.languages : [navigator.language];
+  for (const tag of preferred) {
+    const code = tag.toLowerCase();
+    if (code.startsWith("de")) return "de";
+    if (code.startsWith("en")) return "en";
+  }
+  return "en";
 }
 
 function applyTheme(theme: string | null): void {
