@@ -17,6 +17,12 @@ concurrency:
   group: pages
   cancel-in-progress: true
 
+# The repository default has to be "read and write" so the weekly run can commit
+# the data. Without the line below the build job would inherit that too, and
+# `npm ci` runs third-party package code with whatever token it is handed.
+permissions:
+  contents: read
+
 jobs:
   build:
     runs-on: ubuntu-latest
