@@ -2,7 +2,7 @@
 
 A map of European fuel prices **with taxes and duties stripped out**.
 
-**<https://fuelatlas.github.io/fuleatlas/>**
+**<https://fuelatlas.github.io/fuelatlas/>**
 
 The price on the pump sign says little about whether a country is expensive —
 roughly half of it is the state. This site shows the product price underneath,
