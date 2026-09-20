@@ -1,0 +1,19 @@
+{
+  "name": "fuelatlas-web",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc --noEmit && vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "d3-geo": "^3.1.1"
+  },
+  "devDependencies": {
+    "@types/d3-geo": "^3.1.0",
+    "typescript": "^5.6.0",
+    "vite": "^5.4.0"
+  },
+  "description": "Map of European fuel prices with taxes and duties stripped out"
+}

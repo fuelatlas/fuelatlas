@@ -1,0 +1,10 @@
+__pycache__/
+*.pyc
+.venv/
+.pytest_cache/
+node_modules/
+web/dist/
+.cache/
+# Only the daily tool's output at the repo root — not web/public/data,
+# which is the published dataset.
+/data/

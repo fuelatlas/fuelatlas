@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <!-- Replaced by the interface language on load; this is the fallback for
+         crawlers and for the moment before the script runs. -->
+    <title>What fuel really costs — European fuel prices before tax</title>
+    <meta
+      name="description"
+      content="Map of European fuel prices with taxes and duties stripped out. Updated weekly from the European Commission's Weekly Oil Bulletin."
+    />
+    <link rel="icon" href="data:," />
+    <link rel="stylesheet" href="/src/styles.css" />
+  </head>
+  <body>
+    <div id="app">
+      <header class="topbar">
+        <div class="titles">
+          <h1 id="app-title">Was Sprit wirklich kostet</h1>
+          <p id="app-subtitle" class="subtitle"></p>
+        </div>
+        <div class="topbar-actions">
+          <span id="week-label" class="week"></span>
+          <button id="lang-toggle" type="button" class="icon-button">EN</button>
+          <button id="theme-toggle" type="button" class="icon-button">☾</button>
+        </div>
+      </header>
+
+      <section class="controls" aria-label="Filter">
+        <div class="control-group">
+          <div class="control">
+            <span id="label-product" class="control-label"></span>
+            <div id="product-switch" class="segmented" role="group"></div>
+          </div>
+          <div class="control">
+            <span id="label-metric" class="control-label"></span>
+            <div id="metric-switch" class="segmented" role="group"></div>
+          </div>
+        </div>
+        <p id="metric-help" class="control-help"></p>
+      </section>
+
+      <main class="layout">
+        <section class="map-column">
+          <div id="map-host" class="map-host"></div>
+          <div id="legend" class="legend"></div>
+        </section>
+        <section id="detail" class="detail" hidden></section>
+      </main>
+
+      <section class="table-section">
+        <button id="table-toggle" type="button" class="link-button"></button>
+        <div id="table-host" hidden></div>
+      </section>
+
+      <footer id="sources" class="sources"></footer>
+    </div>
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>
