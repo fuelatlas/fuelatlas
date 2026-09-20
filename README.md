@@ -2,6 +2,8 @@
 
 A map of European fuel prices **with taxes and duties stripped out**.
 
+**<https://fuelatlas.github.io/fuleatlas/>**
+
 The price on the pump sign says little about whether a country is expensive —
 roughly half of it is the state. This site shows the product price underneath,
 and on hover, how the pump price is put together.
@@ -42,10 +44,13 @@ VAT    = pump price × rate / (100 + rate)
 excise = pump price − product price − VAT − other levies
 ```
 
-The breakdown therefore always adds up to the price at the pump. Where the
-table disagrees by more than 1 cent per litre, its value is kept in the dataset
-for comparison and the site says so. Of 98 breakdowns (not every country
-reports every fuel) 79 currently reconcile to the cent.
+The breakdown therefore always adds up to the price at the pump. Two
+thresholds govern what happens when the table disagrees: above 0.1 cent per
+litre its value is carried in the dataset for comparison, and above 1 cent per
+litre the table counts as genuinely out of date rather than merely rounded, and
+the site says so. Of 98 breakdowns (not every country reports every fuel) 74
+currently match the table to within 0.1 cent per litre; 18 carry the
+outdated-table note.
 
 The derived figures land on recognisable real-world rates — Germany's actual
 energy tax, the EU minimum rates, Ireland's mineral oil tax including carbon
@@ -105,6 +110,7 @@ pipeline/            Python 3.11+, only requests + openpyxl
   sources/           wob.py (Oil Bulletin), uk.py (DESNZ), ecb.py (rates)
   daily/             one adapter per country with an open station feed
   model.py           price breakdown and reconciliation
+  mapping.py         country, product and currency tables
   build.py           weekly data -> web/public/data/
   build_daily.py     daily prices -> data/daily.json (not on the site)
   geo.py             GISCO geometry -> europe.geo.json
@@ -186,8 +192,7 @@ official "without taxes" series.
 
 ## Legal
 
-The code carries no licence, so all rights remain with the author. If you would
-like to use some of it, please ask.
+The code carries no licence.
 
 The data comes from public bodies and brings its own conditions. They are named
 in the site footer and in `meta.json`, and continue to apply unchanged:
