@@ -277,9 +277,40 @@ function renderTableSection(ranking: string[]): void {
   host.replaceChildren(scroller);
 }
 
+const METHODOLOGY_URL = "https://energy.ec.europa.eu/data-and-analysis/weekly-oil-bulletin_en";
+
+// A single line above the map: the caveat belongs where the numbers are read,
+// but spelling it out in full up here would cast more doubt than is warranted.
+// The detail sits in the footer, the link goes to the Commission's per-country
+// notes.
+function renderCaveat(): void {
+  const host = $("caveat-top");
+  host.replaceChildren();
+  const link = document.createElement("a");
+  link.href = METHODOLOGY_URL;
+  link.rel = "noreferrer";
+  link.textContent = `${t("caveat.short.link")} →`;
+  host.append(document.createTextNode(`${t("caveat.short")} `), link);
+}
+
 function renderFooter(): void {
   const host = $("sources");
   host.replaceChildren();
+
+  // Every country reports to the bulletin its own way, and the spread between
+  // two of them can be smaller than the spread between two methods. Saying so
+  // belongs next to the numbers, not only in the README.
+  const caveat = document.createElement("p");
+  caveat.className = "caveat";
+  const caveatTitle = document.createElement("strong");
+  caveatTitle.textContent = `${t("caveat.title")}: `;
+  const caveatLink = document.createElement("a");
+  caveatLink.href = METHODOLOGY_URL;
+  caveatLink.rel = "noreferrer";
+  caveatLink.textContent = t("caveat.link");
+  caveat.append(caveatTitle, document.createTextNode(`${t("caveat.body")} `), caveatLink);
+  host.append(caveat);
+
   const heading = document.createElement("strong");
   heading.textContent = `${t("sources")}: `;
   host.append(heading);
@@ -395,6 +426,7 @@ async function main(): Promise<void> {
     const next: Lang = lang() === "de" ? "en" : "de";
     setLang(next);
     localStorage.setItem("lang", next);
+    renderCaveat();
     renderFooter();
     render();
   });
@@ -431,6 +463,7 @@ async function main(): Promise<void> {
     }
   });
 
+  renderCaveat();
   renderFooter();
   render();
   $("app").dataset["ready"] = "true";

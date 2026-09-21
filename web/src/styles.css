@@ -78,6 +78,19 @@ h1 { font-size: 1.6rem; margin: 0; letter-spacing: -0.01em; }
 h3 { font-size: 1.05rem; margin: 0 0 4px; }
 h4 { font-size: 0.95rem; margin: 20px 0 4px; color: var(--ink-2); font-weight: 600; }
 .subtitle { margin: 4px 0 0; color: var(--ink-2); }
+
+/* Sits between the header and the controls. Quiet enough not to shout down the
+   map, present enough that nobody reads the ranking without having seen it. */
+.caveat-top {
+  margin: 14px 0 0;
+  padding: 9px 12px;
+  border-left: 3px solid var(--grid);
+  background: var(--surface);
+  color: var(--ink-2);
+  font-size: 0.82rem;
+  line-height: 1.45;
+}
+.caveat-top a { color: var(--accent); white-space: nowrap; }
 .muted { color: var(--muted); }
 
 .topbar {
@@ -403,5 +416,8 @@ h4 { font-size: 0.95rem; margin: 20px 0 4px; color: var(--ink-2); font-weight: 6
 .sources { margin-top: 36px; padding-top: 16px; border-top: 1px solid var(--grid); font-size: 0.8rem; color: var(--ink-2); }
 .sources a { color: var(--ink-2); }
 .sources p { margin: 6px 0 0; }
+.sources .caveat { margin: 0 0 14px; max-width: 78ch; line-height: 1.5; }
+.sources .caveat strong { color: var(--ink); }
+.sources .caveat a { white-space: nowrap; }
 
 .error { color: #d03b3b; }

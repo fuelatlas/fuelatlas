@@ -47,6 +47,13 @@ const de: Dict = {
   "history.loading": "Lade Verlauf …",
   "close": "Schließen",
   "sources": "Quellen",
+  "caveat.title": "Zur Vergleichbarkeit",
+  "caveat.body":
+    "Die Länder erheben ihre Preise unterschiedlich, und das begrenzt jeden Vergleich. 13 Staaten melden nach Absatzmenge gewichtete Mittelwerte, 14 ein ungewichtetes Mittel über die erfassten Tankstellen. Luxemburg meldet amtliche Höchstpreise — gezahlt wird weniger. In Irland liefert ein einziges Mineralölunternehmen den Landesdurchschnitt für Benzin und Diesel. Rabatte rechnen nur einzelne Länder heraus, und die Marktabdeckung reicht von rund 70 % bis nahezu vollständig. Ein Abstand von ein bis zwei Cent zwischen zwei Ländern kann daher allein aus der Erhebungsmethode stammen.",
+  "caveat.link": "Methodik der einzelnen Länder bei der Kommission",
+  "caveat.short":
+    "Jedes Land ermittelt seine Preise anders — kleine Abstände zwischen zwei Ländern sagen daher wenig aus.",
+  "caveat.short.link": "Wie die Länder messen",
   "note.excise_table_outdated":
     "Die Verbrauchsteuer ist aus dem amtlichen Preispaar abgeleitet; die Steuertabelle der Kommission nennt für diese Woche einen abweichenden Satz.",
   "note.levies_exceed_specific_duty":
@@ -107,6 +114,13 @@ const en: Dict = {
   "history.loading": "Loading series …",
   "close": "Close",
   "sources": "Sources",
+  "caveat.title": "On comparability",
+  "caveat.body":
+    "Countries collect their prices in different ways, and that limits every comparison. 13 report averages weighted by the volume sold, 14 an unweighted mean across the stations they survey. Luxembourg reports official maximum prices — drivers pay less. In Ireland a single oil company supplies the national average for petrol and diesel. Only some countries strip out discounts, and market coverage ranges from about 70 % to nearly complete. A gap of one or two cents between two countries may therefore come from the method alone.",
+  "caveat.link": "Per-country methodology at the Commission",
+  "caveat.short":
+    "Every country works out its prices differently, so a small gap between two of them means little.",
+  "caveat.short.link": "How the countries measure",
   "note.excise_table_outdated":
     "The excise duty is derived from the official price pair; the Commission's tax table quotes a different rate for this week.",
   "note.levies_exceed_specific_duty":
