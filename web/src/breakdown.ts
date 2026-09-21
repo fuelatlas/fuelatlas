@@ -47,12 +47,13 @@ export function breakdownRows(entry: Breakdown): HTMLElement {
   const list = document.createElement("dl");
   list.className = "parts";
 
-  const caption = document.createElement("dt");
-  caption.className = "parts-caption";
+  // Spans both columns rather than sitting in the value column: as the widest
+  // thing in that column it dictated its width, squeezing the labels until
+  // "Energie-/Verbrauchsteuer" broke mid-word.
   const shareCaption = document.createElement("dd");
   shareCaption.className = "parts-caption";
   shareCaption.textContent = t("parts.share");
-  list.append(caption, shareCaption);
+  list.append(shareCaption);
 
   for (const part of parts(entry)) {
     const key = document.createElement("dt");
@@ -63,7 +64,12 @@ export function breakdownRows(entry: Breakdown): HTMLElement {
       part.key === "vat"
         ? `${t("part.vat")} (${formatRate(entry.vat_rate)})`
         : t(`part.${part.key}`);
-    key.append(swatch, document.createTextNode(name));
+    // A real element, not a text node: the text has to be its own flex item to
+    // get min-width:0, otherwise it never shrinks and runs into the figures.
+    const label = document.createElement("span");
+    label.className = "part-name";
+    label.textContent = name;
+    key.append(swatch, label);
 
     const value = document.createElement("dd");
     const amount = document.createElement("strong");
@@ -78,9 +84,10 @@ export function breakdownRows(entry: Breakdown): HTMLElement {
   return list;
 }
 
-/** "19 %" — the statutory rate, shown next to the VAT row's name. */
+/** "19 %" — the statutory rate, shown next to the VAT row's name. A no-break
+ *  space keeps the number and the sign on one line when the label wraps. */
 function formatRate(rate: number): string {
-  return `${number(rate, 1)} %`;
+  return `${number(rate, 1)}\u00A0%`;
 }
 
 export function notesFor(entry: Breakdown): HTMLElement | null {

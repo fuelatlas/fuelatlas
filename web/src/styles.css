@@ -299,18 +299,31 @@ h4 { font-size: 0.95rem; margin: 20px 0 4px; color: var(--ink-2); font-weight: 6
 .stack-part:first-child { border-radius: 4px 1px 1px 4px; }
 .stack-part:last-child { border-radius: 1px 4px 4px 1px; }
 
-.parts { display: grid; grid-template-columns: 1fr auto; gap: 2px 12px; margin: 0; font-size: 0.85rem; }
-.parts dt { display: flex; align-items: center; gap: 7px; color: var(--ink-2); }
+/* minmax(0, …) rather than a bare 1fr: a plain 1fr keeps min-width:auto and so
+   never shrinks below its label, which pushed the share column out of the
+   290px tooltip on German names like "Energie-/Verbrauchsteuer". */
+.parts { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 2px 12px; margin: 0; font-size: 0.85rem; }
+.parts dt {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  min-width: 0;
+  color: var(--ink-2);
+}
+/* The long German label carries soft hyphens, which the default
+   hyphens:manual honours; break-word stays as the last resort. */
+.parts .part-name { min-width: 0; overflow-wrap: break-word; }
 .parts dd { margin: 0; display: flex; gap: 8px; justify-content: flex-end; font-variant-numeric: tabular-nums; white-space: nowrap; }
 .parts dd .muted { min-width: 34px; text-align: right; }
 .parts .parts-caption {
+  grid-column: 1 / -1;
   color: var(--muted);
   font-size: 0.7rem;
   text-transform: uppercase;
   letter-spacing: 0.03em;
   padding-bottom: 2px;
 }
-.parts dd.parts-caption { justify-content: flex-end; }
+.parts dd.parts-caption { justify-content: flex-end; white-space: normal; }
 
 .key-line { display: inline-block; width: 12px; height: 3px; border-radius: 2px; flex: none; }
 
@@ -327,9 +340,6 @@ h4 { font-size: 0.95rem; margin: 20px 0 4px; color: var(--ink-2); font-weight: 6
 
 /* The burden arithmetic under the breakdown: two inputs, then the division. */
 .working {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
   margin: 8px 0 0;
   padding-top: 8px;
   border-top: 1px solid var(--grid);
@@ -337,7 +347,15 @@ h4 { font-size: 0.95rem; margin: 20px 0 4px; color: var(--ink-2); font-weight: 6
   color: var(--muted);
   font-variant-numeric: tabular-nums;
 }
-.working strong { margin-top: 3px; color: var(--ink); }
+.working p {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  margin: 0 0 2px;
+}
+.working p:last-child { margin-bottom: 0; }
+.working span:first-child { min-width: 0; overflow-wrap: break-word; }
+.working strong { color: var(--ink); white-space: nowrap; }
 
 .notes { margin: 10px 0 0; color: var(--muted); font-size: 0.78rem; line-height: 1.4; }
 
@@ -459,5 +477,7 @@ h4 { font-size: 0.95rem; margin: 20px 0 4px; color: var(--ink-2); font-weight: 6
 .sources .caveat { margin: 0 0 14px; max-width: 78ch; line-height: 1.5; }
 .sources .caveat strong { color: var(--ink); }
 .sources .caveat a { white-space: nowrap; }
+.sources .privacy { margin-top: 12px; max-width: 78ch; line-height: 1.5; }
+.sources .privacy strong { color: var(--ink); }
 
 .error { color: #d03b3b; }

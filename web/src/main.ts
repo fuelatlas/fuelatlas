@@ -379,6 +379,11 @@ function renderTableSection(ranking: string[]): void {
 
 const METHODOLOGY_URL = "https://energy.ec.europa.eu/data-and-analysis/weekly-oil-bulletin_en";
 
+/** GitHub serves this statement in both interface languages. */
+function githubPrivacyUrl(): string {
+  return `https://docs.github.com/${lang()}/site-policy/privacy-policies/github-general-privacy-statement`;
+}
+
 // A single line above the map: the caveat belongs where the numbers are read,
 // but spelling it out in full up here would cast more doubt than is warranted.
 // The detail sits in the footer, the link goes to the Commission's per-country
@@ -426,6 +431,20 @@ function renderFooter(): void {
   licence.className = "muted";
   licence.textContent = meta.sources.map((source) => source.licence[lang()]).join(" · ");
   host.append(licence);
+
+  // The site itself processes nothing; the hosting does. Saying which is which
+  // is the part GitHub's own statement cannot cover, so it goes first and the
+  // link carries the rest.
+  const privacy = document.createElement("p");
+  privacy.className = "privacy";
+  const privacyTitle = document.createElement("strong");
+  privacyTitle.textContent = `${t("privacy.title")}: `;
+  const privacyLink = document.createElement("a");
+  privacyLink.href = githubPrivacyUrl();
+  privacyLink.rel = "noreferrer";
+  privacyLink.textContent = t("privacy.link");
+  privacy.append(privacyTitle, document.createTextNode(`${t("privacy.body")} `), privacyLink);
+  host.append(privacy);
 }
 
 // --- interaction -------------------------------------------------------------

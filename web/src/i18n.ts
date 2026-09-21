@@ -25,14 +25,15 @@ const de: Dict = {
   "explain.burden.reading":
     "Ein Liter kostet dort also {value} dessen, was eine Person an einem Tag zur Verfügung hat. Zum Vergleich: in {other} sind es {othervalue}.",
   "burden.income": "Nettoeinkommen (Median)",
-  "burden.perYear": "im Jahr",
-  "burden.perDay": "am Tag",
+  "burden.perDay": "davon an einem Tag",
   "explain.burden.missing":
     "Für das Vereinigte Königreich veröffentlicht Eurostat keine Einkommen mehr; es bleibt bei dieser Darstellung ohne Farbe.",
   "metric.burden.help":
     "Was ein Liter an der Zapfsäule kostet, gemessen am verfügbaren Nettoeinkommen: Anteil eines Tageseinkommens. Medianeinkommen von Eurostat, Bezugsjahr {year}. Für das Vereinigte Königreich liegen keine Werte vor.",
   "part.net": "Produktpreis",
-  "part.excise": "Energie-/Verbrauchsteuer",
+  // Soft hyphens: the word is wider than the tooltip column and would
+  // otherwise be broken wherever the line happens to end.
+  "part.excise": "Energie-/Ver\u00ADbrauch\u00ADsteuer",
   "part.other": "Sonstige Abgaben",
   "part.vat": "Mehrwertsteuer",
   "parts.share": "Anteil am Endpreis",
@@ -62,6 +63,10 @@ const de: Dict = {
   "history.loading": "Lade Verlauf …",
   "close": "Schließen",
   "sources": "Quellen",
+  "privacy.title": "Datenschutz",
+  "privacy.body":
+    "Diese Seite erhebt selbst keine Daten: keine Cookies, kein Tracking, keine Formulare, keine externen Schriften oder CDNs. Die Wahl von Sprache und Design wird im Browser gespeichert und verlässt das Gerät nicht. Gehostet wird die Seite bei GitHub Pages; beim Abruf fallen dort Server-Logs mit IP-Adresse an, für die GitHub verantwortlich ist.",
+  "privacy.link": "Datenschutzerklärung von GitHub",
   "caveat.title": "Zur Vergleichbarkeit",
   "caveat.body":
     "Die Länder erheben ihre Preise unterschiedlich, und das begrenzt jeden Vergleich. 13 Staaten melden nach Absatzmenge gewichtete Mittelwerte, 14 ein ungewichtetes Mittel über die erfassten Tankstellen. Luxemburg meldet amtliche Höchstpreise — gezahlt wird weniger. In Irland liefert ein einziges Mineralölunternehmen den Landesdurchschnitt für Benzin und Diesel. Rabatte rechnen nur einzelne Länder heraus, und die Marktabdeckung reicht von rund 70 % bis nahezu vollständig. Ein Abstand von ein bis zwei Cent zwischen zwei Ländern kann daher allein aus der Erhebungsmethode stammen. Für die Belastung gilt derselbe Vorbehalt ein zweites Mal: die Einkommen stammen aus EU-SILC, das die Mitgliedstaaten ebenfalls unterschiedlich erheben, und sie beziehen sich auf ein ganzes Jahr, die Preise auf eine Woche.",
@@ -107,8 +112,7 @@ const en: Dict = {
   "explain.burden.reading":
     "So a litre there costs {value} of what one person has available in a day. For comparison, in {other} it is {othervalue}.",
   "burden.income": "Median income, after tax",
-  "burden.perYear": "a year",
-  "burden.perDay": "a day",
+  "burden.perDay": "of which in one day",
   "explain.burden.missing":
     "Eurostat no longer publishes incomes for the United Kingdom, so it stays uncoloured on this metric.",
   "metric.burden.help":
@@ -144,6 +148,10 @@ const en: Dict = {
   "history.loading": "Loading series …",
   "close": "Close",
   "sources": "Sources",
+  "privacy.title": "Privacy",
+  "privacy.body":
+    "This site collects nothing itself: no cookies, no tracking, no forms, no external fonts or CDNs. Your choice of language and theme is kept in your browser and never leaves your device. The site is hosted on GitHub Pages, where each request leaves a server log entry including your IP address, for which GitHub is responsible.",
+  "privacy.link": "GitHub's privacy statement",
   "caveat.title": "On comparability",
   "caveat.body":
     "Countries collect their prices in different ways, and that limits every comparison. 13 report averages weighted by the volume sold, 14 an unweighted mean across the stations they survey. Luxembourg reports official maximum prices — drivers pay less. In Ireland a single oil company supplies the national average for petrol and diesel. Only some countries strip out discounts, and market coverage ranges from about 70 % to nearly complete. A gap of one or two cents between two countries may therefore come from the method alone. The burden metric carries the same caveat twice over: incomes come from EU-SILC, which member states also survey differently, and they cover a whole year where the prices cover a week.",

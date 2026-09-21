@@ -106,17 +106,29 @@ function render(context: TooltipContext): Node[] {
   // On the burden metric the percentage alone says nothing, so the tooltip
   // shows the two numbers it came from and the division between them.
   if (metric === "burden" && context.income) {
-    const working = document.createElement("p");
+    const working = document.createElement("div");
     working.className = "working";
-    const income = document.createElement("span");
-    income.textContent = `${t("burden.income")}: ${euroAmount(context.income)} ${t("burden.perYear")}`;
-    const perDay = document.createElement("span");
-    perDay.textContent = `${t("burden.perDay")}: ${euroAmount(context.income / 365, 2)}`;
-    const sum = document.createElement("strong");
-    sum.textContent =
-      `${euroPerLitre(entry.gross)} ÷ ${euroAmount(context.income / 365, 2)} = ` +
-      `${percent(context.value, 1)}`;
-    working.append(income, perDay, sum);
+    const perDay = context.income / 365;
+    // Label left, figure right — one line each, so nothing has to wrap inside
+    // the fixed-width tooltip.
+    const row = (label: string, figure: string, strong = false): HTMLElement => {
+      const line = document.createElement("p");
+      const name = document.createElement("span");
+      name.textContent = label;
+      const value = document.createElement(strong ? "strong" : "span");
+      value.textContent = figure;
+      line.append(name, value);
+      return line;
+    };
+    working.append(
+      row(t("burden.income"), euroAmount(context.income)),
+      row(t("burden.perDay"), euroAmount(perDay, 2)),
+      row(
+        `${euroPerLitre(entry.gross)} ÷ ${euroAmount(perDay, 2)}`,
+        percent(context.value, 1),
+        true,
+      ),
+    );
     nodes.push(working);
   }
 
