@@ -136,6 +136,32 @@ h4 { font-size: 0.95rem; margin: 20px 0 4px; color: var(--ink-2); font-weight: 6
 }
 .control-help { flex-basis: 100%; margin: 0; color: var(--muted); font-size: 0.85rem; }
 
+/* Only ever shown for the burden metric, whose number needs spelling out. */
+.explainer {
+  flex-basis: 100%;
+  margin: 10px 0 0;
+  padding: 12px 14px;
+  border-left: 3px solid var(--accent);
+  background: var(--surface);
+  font-size: 0.82rem;
+  line-height: 1.5;
+  color: var(--ink-2);
+}
+.explainer p { margin: 6px 0 0; }
+.explainer strong { color: var(--ink); }
+.explainer .formula,
+.explainer .worked {
+  font-variant-numeric: tabular-nums;
+}
+.explainer .formula {
+  padding: 5px 8px;
+  border-radius: 4px;
+  background: var(--grid);
+  display: inline-block;
+  color: var(--ink);
+}
+.explainer .muted { color: var(--muted); font-size: 0.95em; }
+
 /* A segmented control rather than loose pills: these options are one choice, so
    they share one track, and the chosen one is a raised card instead of a
    saturated fill — on this page the map owns the colour. */
@@ -298,6 +324,20 @@ h4 { font-size: 0.95rem; margin: 20px 0 4px; color: var(--ink-2); font-weight: 6
   color: var(--ink-2);
 }
 .total-line strong { font-variant-numeric: tabular-nums; color: var(--ink); }
+
+/* The burden arithmetic under the breakdown: two inputs, then the division. */
+.working {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  margin: 8px 0 0;
+  padding-top: 8px;
+  border-top: 1px solid var(--grid);
+  font-size: 0.78rem;
+  color: var(--muted);
+  font-variant-numeric: tabular-nums;
+}
+.working strong { margin-top: 3px; color: var(--ink); }
 
 .notes { margin: 10px 0 0; color: var(--muted); font-size: 0.78rem; line-height: 1.4; }
 

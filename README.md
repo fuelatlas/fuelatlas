@@ -56,6 +56,21 @@ The derived figures land on recognisable real-world rates — Germany's actual
 energy tax, the EU minimum rates, Ireland's mineral oil tax including carbon
 tax — which is the strongest evidence that the direction is right.
 
+### What a litre costs relative to income
+
+The map can also show the pump price as a share of one day's median equivalised
+income — Eurostat's EU-SILC figure, household income after taxes and transfers,
+adjusted for household size. It reorders the map almost completely: Bulgaria has
+the second-cheapest petrol in the EU and the fourth-heaviest burden, while
+Denmark is dearest at the pump and sits in the bottom third once income is
+accounted for. A Romanian spends 8.4 % of a day's income on a litre, a
+Luxembourger 1.3 %.
+
+The United Kingdom has no figure — Eurostat still lists it but stopped
+publishing values — so it stays blank on that metric. The incomes are annual
+where the prices are weekly, and EU-SILC has the same national differences in
+method as the Oil Bulletin, which is why the site says so next to the map.
+
 ## Data sources
 
 | Source | Coverage | Cadence | Licence |
@@ -63,6 +78,7 @@ tax — which is the strongest evidence that the direction is right.
 | [EU Weekly Oil Bulletin](https://energy.ec.europa.eu/data-and-analysis/weekly-oil-bulletin_en) | EU-27, prices with and without tax, tax rates, history from 2005 | weekly, Thu | Decision 2011/833/EU |
 | [DESNZ Weekly road fuel prices](https://www.gov.uk/government/statistics/weekly-road-fuel-prices) | United Kingdom, price + duty rate + VAT | weekly, Thu | Open Government Licence v3.0 |
 | [ECB reference rates](https://www.ecb.europa.eu/stats/eurofxref/) | GBP conversion | daily | reproduction with attribution |
+| [Eurostat EU-SILC](https://ec.europa.eu/eurostat/databrowser/view/ilc_di03) | median equivalised income, 27 countries | annual | Decision 2011/833/EU |
 | [Eurostat GISCO](https://ec.europa.eu/eurostat/web/gisco) | country boundaries | — | © EuroGeographics and UN-FAO, non-commercial |
 
 Countries outside the euro area are converted with the rate the bulletin ships
@@ -107,7 +123,8 @@ outside the published directory.
 
 ```
 pipeline/            Python 3.11+, only requests + openpyxl
-  sources/           wob.py (Oil Bulletin), uk.py (DESNZ), ecb.py (rates)
+  sources/           wob.py (Oil Bulletin), uk.py (DESNZ), ecb.py (rates),
+                     eurostat.py (incomes)
   daily/             one adapter per country with an open station feed
   model.py           price breakdown and reconciliation
   mapping.py         country, product and currency tables

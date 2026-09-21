@@ -16,7 +16,7 @@ from pathlib import Path
 
 from pipeline import mapping
 from pipeline.model import MissingData, build_breakdown, build_from_duty
-from pipeline.sources import ecb, uk, wob
+from pipeline.sources import ecb, eurostat, uk, wob
 
 log = logging.getLogger("build")
 
@@ -64,6 +64,16 @@ SOURCES = [
         "licence": {
             "de": "© Europäische Zentralbank, Wiedergabe mit Quellenangabe gestattet",
             "en": "© European Central Bank, reproduction permitted with attribution",
+        },
+    },
+    {
+        "id": "eurostat",
+        "de": "Eurostat — Medianeinkommen (EU-SILC, ilc_di03)",
+        "en": "Eurostat — median equivalised income (EU-SILC, ilc_di03)",
+        "url": "https://ec.europa.eu/eurostat/databrowser/view/ilc_di03",
+        "licence": {
+            "de": "© Europäische Union, Weiterverwendung nach Beschluss 2011/833/EU",
+            "en": "© European Union, reuse under Decision 2011/833/EU",
         },
     },
     {
@@ -220,6 +230,15 @@ def build_latest(with_tax, wo_tax, duties, history) -> tuple[dict, list[str]]:
         for key in with_tax.aggregates
     }
 
+    # Secondary to the prices: if Eurostat is unreachable the map simply loses
+    # the burden metric, which must not take the week's prices down with it.
+    income: dict[str, float] = {}
+    income_year = ""
+    try:
+        income, income_year = eurostat.median_income()
+    except Exception as exc:  # noqa: BLE001 — any failure here is non-fatal
+        problems.append(f"income: {exc}")
+
     data = {
         "week": date.isoformat(),
         "unit": "EUR/1000l",
@@ -230,6 +249,11 @@ def build_latest(with_tax, wo_tax, duties, history) -> tuple[dict, list[str]]:
         "countries": countries,
         "aggregates": aggregates,
         "names": {c: mapping.COUNTRY_NAMES[c] for c in countries},
+        "income": {
+            "year": income_year,
+            "unit": "EUR/year",
+            "values": {c: income[c] for c in countries if c in income},
+        },
     }
     data["exchange_rates"] = _exchange_rates(history, uk_rates, date)
     return data, problems, uk_weeks

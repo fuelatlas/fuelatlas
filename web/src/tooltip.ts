@@ -1,6 +1,6 @@
 import { breakdownRows, notesFor, stackedBar } from "./breakdown";
 import type { Breakdown, Metric } from "./data";
-import { euroPerLitre, percent, signedPercent } from "./format";
+import { euroAmount, euroPerLitre, percent, signedPercent } from "./format";
 import { t } from "./i18n";
 
 export interface TooltipContext {
@@ -11,6 +11,10 @@ export interface TooltipContext {
   rank: number;
   total: number;
   euAverage: number | null;
+  /** The mapped metric's value, already computed — burden needs income to exist. */
+  value: number;
+  /** The country's annual median income, only set when it has one. */
+  income?: number;
 }
 
 const OFFSET = 16;
@@ -69,10 +73,9 @@ function render(context: TooltipContext): Node[] {
   const headline = document.createElement("p");
   headline.className = "headline";
   const value = document.createElement("strong");
-  value.textContent =
-    metric === "tax_share"
-      ? percent(entry.tax_share)
-      : euroPerLitre(metricNumber(entry, metric));
+  value.textContent = isShare(metric)
+    ? percent(context.value, metric === "burden" ? 1 : 2)
+    : euroPerLitre(context.value);
   const caption = document.createElement("span");
   caption.textContent = t(`metric.${metric}`);
   headline.append(value, caption);
@@ -84,7 +87,7 @@ function render(context: TooltipContext): Node[] {
   context_line.append(rank);
   if (context.euAverage !== null && context.euAverage > 0) {
     const delta = document.createElement("span");
-    const own = metric === "tax_share" ? entry.tax_share : metricNumber(entry, metric);
+    const own = context.value;
     delta.textContent = `${signedPercent(own / context.euAverage - 1)} ${t("vs.eu")}`;
     context_line.append(delta);
   }
@@ -100,20 +103,28 @@ function render(context: TooltipContext): Node[] {
   total.append(totalLabel, totalValue);
   nodes.push(total);
 
+  // On the burden metric the percentage alone says nothing, so the tooltip
+  // shows the two numbers it came from and the division between them.
+  if (metric === "burden" && context.income) {
+    const working = document.createElement("p");
+    working.className = "working";
+    const income = document.createElement("span");
+    income.textContent = `${t("burden.income")}: ${euroAmount(context.income)} ${t("burden.perYear")}`;
+    const perDay = document.createElement("span");
+    perDay.textContent = `${t("burden.perDay")}: ${euroAmount(context.income / 365, 2)}`;
+    const sum = document.createElement("strong");
+    sum.textContent =
+      `${euroPerLitre(entry.gross)} ÷ ${euroAmount(context.income / 365, 2)} = ` +
+      `${percent(context.value, 1)}`;
+    working.append(income, perDay, sum);
+    nodes.push(working);
+  }
+
   const notes = notesFor(entry);
   if (notes) nodes.push(notes);
   return nodes;
 }
 
-function metricNumber(entry: Breakdown, metric: Metric): number {
-  switch (metric) {
-    case "net":
-      return entry.net;
-    case "gross":
-      return entry.gross;
-    case "tax_total":
-      return entry.vat + entry.excise + entry.other;
-    case "tax_share":
-      return entry.tax_share;
-  }
+function isShare(metric: Metric): boolean {
+  return metric === "tax_share" || metric === "burden";
 }

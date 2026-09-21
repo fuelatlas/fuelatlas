@@ -41,7 +41,10 @@ const PART_KEYS = new Set(["net", "excise", "other", "vat"]);
 
 /** The sort the table opens with: the mapped metric, dearest first. */
 export function defaultSort(metric: Metric): Sort {
-  const column: SortColumn = metric === "tax_total" ? "gross" : metric;
+  // The table has no burden column of its own; ordering by the pump price it is
+  // derived from is the closest thing.
+  const column: SortColumn =
+    metric === "tax_total" || metric === "burden" ? "gross" : metric;
   return { column, direction: "desc" };
 }
 

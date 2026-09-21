@@ -44,22 +44,40 @@ const TIERS_DARK = ["#5ec278", "#3a9b57", "#2a7546", "#57491d", "#8f5526", "#cf5
  */
 export const TIER_BOUNDS = [-0.15, -0.08, -0.03, 0.03, 0.08, 0.15];
 
+/**
+ * The burden metric needs its own bands. Prices cluster — 22 of 28 countries
+ * within 12 % of the average — but a price measured against income spreads by a
+ * factor of six, from 1.3 % of a day's income in Luxembourg to 8.4 % in Romania.
+ * Run through the bands above, that puts ten countries in the bottom tier and
+ * twelve in the top and empties the middle. These bounds spread the same 27
+ * countries across all seven steps.
+ */
+export const BURDEN_TIER_BOUNDS = [-0.5, -0.3, -0.12, 0.15, 0.45, 0.9];
+
 export function tiers(): readonly string[] {
   return isDark() ? TIERS_DARK : TIERS_LIGHT;
 }
 
 /** Which tier a value falls into, 0 (far below average) to 6 (far above). */
-export function tierOf(value: number, average: number): number {
+export function tierOf(
+  value: number,
+  average: number,
+  bounds: readonly number[] = TIER_BOUNDS,
+): number {
   if (!average) return 3;
   const deviation = value / average - 1;
-  for (let index = 0; index < TIER_BOUNDS.length; index += 1) {
-    if (deviation < TIER_BOUNDS[index]!) return index;
+  for (let index = 0; index < bounds.length; index += 1) {
+    if (deviation < bounds[index]!) return index;
   }
-  return TIER_BOUNDS.length;
+  return bounds.length;
 }
 
-export function tierColor(value: number, average: number): string {
-  return tiers()[tierOf(value, average)]!;
+export function tierColor(
+  value: number,
+  average: number,
+  bounds: readonly number[] = TIER_BOUNDS,
+): string {
+  return tiers()[tierOf(value, average, bounds)]!;
 }
 
 /** Stack segments use categorical slots 1-4 in fixed order (never cycled). */

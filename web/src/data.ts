@@ -38,6 +38,14 @@ export interface Latest {
   aggregates: Record<string, Record<string, { gross: number; net: number }>>;
   names: Record<string, { de: string; en: string }>;
   exchange_rates: Record<string, ExchangeRate>;
+  income?: Income;
+}
+
+/** Median equivalised disposable income, one figure per country and year. */
+export interface Income {
+  year: string;
+  unit: string;
+  values: Record<string, number>;
 }
 
 export interface Series {
@@ -91,10 +99,18 @@ export function loadHistory(country: string): Promise<CountryHistory> {
   return pending;
 }
 
-export type Metric = "net" | "gross" | "tax_share" | "tax_total";
+export type Metric = "net" | "gross" | "tax_share" | "tax_total" | "burden";
 
-/** The number the map colours and the table sorts by, in EUR/1000 l (or a fraction). */
-export function metricValue(entry: Breakdown, metric: Metric): number {
+/**
+ * The number the map colours and the table sorts by, in EUR/1000 l (or a
+ * fraction). `burden` needs the country's income as well and returns undefined
+ * without it, which is how the United Kingdom stays blank on that metric.
+ */
+export function metricValue(
+  entry: Breakdown,
+  metric: Metric,
+  income?: number,
+): number | undefined {
   switch (metric) {
     case "net":
       return entry.net;
@@ -104,5 +120,8 @@ export function metricValue(entry: Breakdown, metric: Metric): number {
       return entry.tax_share;
     case "tax_total":
       return entry.vat + entry.excise + entry.other;
+    case "burden":
+      // One litre at the pump against one day's income, both in euro.
+      return income ? entry.gross / 1000 / (income / 365) : undefined;
   }
 }

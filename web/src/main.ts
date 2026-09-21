@@ -1,17 +1,32 @@
-import { TIER_BOUNDS, isDark, tiers } from "./colors";
+import { BURDEN_TIER_BOUNDS, TIER_BOUNDS, isDark, tiers } from "./colors";
 import {
   loadGeometry, loadLatest, loadMeta, metricValue,
   type Latest, type Meta, type Metric,
 } from "./data";
 import { DetailPanel } from "./detail";
-import { euroPerLitre, euroPlain, isoDate, percent, signedPercent } from "./format";
+import { euroAmount, euroPerLitre, euroPlain, isoDate, percent, signedPercent } from "./format";
 import { lang, setLang, t, type Lang } from "./i18n";
 import { EuropeMap, isNarrowViewport } from "./map";
 import { renderOverview } from "./overview";
 import { defaultSort, renderTable, type Sort } from "./table";
 import { Tooltip } from "./tooltip";
 
-const METRICS: Metric[] = ["net", "gross", "tax_share", "tax_total"];
+const BASE_METRICS: Metric[] = ["net", "gross", "tax_share", "tax_total"];
+
+/**
+ * The burden metric only exists when the build managed to fetch incomes. If
+ * Eurostat was down that week the option disappears rather than showing an
+ * empty map.
+ */
+/** The help line, with the income year filled in where the text asks for it. */
+function metricHelp(metric: Metric): string {
+  return t(`metric.${metric}.help`).replace("{year}", latest.income?.year ?? "—");
+}
+
+function metrics(): Metric[] {
+  const hasIncome = Object.keys(latest.income?.values ?? {}).length > 0;
+  return hasIncome ? [...BASE_METRICS, "burden"] : BASE_METRICS;
+}
 
 interface State {
   product: string;
@@ -51,14 +66,90 @@ function productLabel(key: string): string {
 /** Countries that have the selected product, with the selected metric applied. */
 function currentValues(): Map<string, number> {
   const values = new Map<string, number>();
+  const income = latest.income?.values ?? {};
   for (const [code, products] of Object.entries(latest.countries)) {
     const entry = products[state.product];
-    if (entry) values.set(code, metricValue(entry, state.metric));
+    if (!entry) continue;
+    const value = metricValue(entry, state.metric, income[code]);
+    if (value !== undefined) values.set(code, value);
   }
   return values;
 }
 
+/**
+ * "Belastung" is the one metric whose number nobody can read off the map
+ * without being told what it is, so selecting it unfolds the arithmetic on a
+ * real country rather than leaving a percentage to be guessed at.
+ */
+function renderExplainer(): void {
+  const host = $("metric-explainer");
+  host.replaceChildren();
+  if (state.metric !== "burden") {
+    host.hidden = true;
+    return;
+  }
+  host.hidden = false;
+
+  const title = document.createElement("strong");
+  title.textContent = t("explain.burden.title");
+
+  const body = document.createElement("p");
+  body.textContent = t("explain.burden.body").replace("{year}", latest.income?.year ?? "—");
+
+  const formula = document.createElement("p");
+  formula.className = "formula";
+  formula.textContent = t("explain.burden.formula");
+
+  host.append(title, body, formula);
+
+  // Worked through on the country that carries the heaviest burden this week,
+  // set against the lightest — two real rows beat an abstract ratio.
+  const values = [...currentValues().entries()].sort((a, b) => b[1] - a[1]);
+  const heaviest = values[0];
+  const lightest = values[values.length - 1];
+  const incomes = latest.income?.values ?? {};
+  if (heaviest && lightest) {
+    const [code, share] = heaviest;
+    const entry = latest.countries[code]?.[state.product];
+    const income = incomes[code];
+    if (entry && income) {
+      const example = document.createElement("p");
+      example.className = "worked";
+      const label = document.createElement("strong");
+      label.textContent = `${t("explain.burden.example").replace("{country}", countryName(code))} `;
+      example.append(
+        label,
+        document.createTextNode(
+          `${euroPerLitre(entry.gross)} ÷ (${euroAmount(income)} ÷ 365 = ` +
+            `${euroAmount(income / 365, 2)}) = ${percent(share, 1)}`,
+        ),
+      );
+      const reading = document.createElement("p");
+      reading.textContent = t("explain.burden.reading")
+        .replace("{value}", percent(share, 1))
+        .replace("{other}", countryName(lightest[0]))
+        .replace("{othervalue}", percent(lightest[1], 1));
+      host.append(example, reading);
+    }
+  }
+
+  const missing = document.createElement("p");
+  missing.className = "muted";
+  missing.textContent = t("explain.burden.missing");
+  host.append(missing);
+}
+
+/** Burden spreads far wider than a price does, so it gets its own bands. */
+function tierBounds(): readonly number[] {
+  return state.metric === "burden" ? BURDEN_TIER_BOUNDS : TIER_BOUNDS;
+}
+
+function isShare(metric: Metric): boolean {
+  return metric === "tax_share" || metric === "burden";
+}
+
 function formatMetric(value: number): string {
+  if (state.metric === "burden") return percent(value, 1);
   return state.metric === "tax_share" ? percent(value) : euroPerLitre(value);
 }
 
@@ -69,7 +160,7 @@ function formatMetric(value: number): string {
  * all. Full precision stays in the tooltip and the table.
  */
 function formatCompact(value: number): string {
-  if (state.metric === "tax_share") return percent(value, 0);
+  if (isShare(state.metric)) return percent(value, state.metric === "burden" ? 1 : 0);
   return isNarrowViewport() ? euroPlain(value) : euroPerLitre(value);
 }
 
@@ -85,6 +176,10 @@ function euAverage(): number | null {
       return aggregate.gross - aggregate.net;
     case "tax_share":
       return (aggregate.gross - aggregate.net) / aggregate.gross;
+    case "burden":
+      // No EU-wide income in the artefact, so the colour scale centres on the
+      // median of the countries instead — see the caller's `?? median(...)`.
+      return null;
   }
 }
 
@@ -95,10 +190,15 @@ function render(): void {
   const ranking = [...values.entries()].sort((a, b) => b[1] - a[1]).map(([code]) => code);
 
   const average = euAverage() ?? median(values);
-  map.paint(values, average, (code) => {
-    const value = values.get(code);
-    return value === undefined ? t("nodata") : formatCompact(value);
-  });
+  map.paint(
+    values,
+    average,
+    (code) => {
+      const value = values.get(code);
+      return value === undefined ? t("nodata") : formatCompact(value);
+    },
+    tierBounds(),
+  );
   map.select(state.country);
 
   renderControls();
@@ -173,10 +273,10 @@ function renderControls(): void {
 
   segmented(
     $("metric-switch"),
-    METRICS.map((metric) => ({
+    metrics().map((metric) => ({
       value: metric,
       label: t(`metric.${metric}`),
-      title: t(`metric.${metric}.help`),
+      title: metricHelp(metric),
     })),
     state.metric,
     (value) => {
@@ -186,7 +286,8 @@ function renderControls(): void {
     },
   );
 
-  $("metric-help").textContent = t(`metric.${state.metric}.help`);
+  $("metric-help").textContent = metricHelp(state.metric);
+  renderExplainer();
   $("label-product").textContent = t("product");
   $("label-metric").textContent = t("metric");
   $("app-title").textContent = t("title");
@@ -209,10 +310,9 @@ function renderLegend(values: Map<string, number>, average: number): void {
 
   const numbers = [...values.values()];
   // "cheaper/dearer" is about money; a share is lower or higher.
-  const ends =
-    state.metric === "tax_share"
-      ? ["legend.lower", "legend.higher"]
-      : ["legend.cheap", "legend.expensive"];
+  const ends = isShare(state.metric)
+    ? ["legend.lower", "legend.higher"]
+    : ["legend.cheap", "legend.expensive"];
 
   const low = document.createElement("span");
   low.className = "legend-end";
@@ -230,7 +330,7 @@ function renderLegend(values: Map<string, number>, average: number): void {
   // placed on the scale without reading its number.
   const ticks = document.createElement("div");
   ticks.className = "legend-ticks";
-  TIER_BOUNDS.forEach((bound, index) => {
+  tierBounds().forEach((bound, index) => {
     const tick = document.createElement("span");
     tick.style.left = `${((index + 1) / tiers().length) * 100}%`;
     tick.textContent = Math.abs(bound) < 0.05 ? "" : signedPercent(bound);
@@ -345,6 +445,11 @@ function hover(country: string | null, event?: PointerEvent | FocusEvent): void 
     tooltip.hide();
     return;
   }
+  const value = currentValues().get(country);
+  if (value === undefined) {
+    tooltip.hide();
+    return;
+  }
   const ranking = window.__ranking ?? [];
   tooltip.show(
     {
@@ -355,6 +460,8 @@ function hover(country: string | null, event?: PointerEvent | FocusEvent): void 
       rank: ranking.indexOf(country) + 1,
       total: ranking.length,
       euAverage: euAverage(),
+      value,
+      income: latest.income?.values[country],
     },
     event,
   );
@@ -380,7 +487,7 @@ function applyUrl(): void {
   const product = params.get("product");
   if (product && latest.products.some((entry) => entry.key === product)) state.product = product;
   const metric = params.get("metric") as Metric | null;
-  if (metric && METRICS.includes(metric)) state.metric = metric;
+  if (metric && metrics().includes(metric)) state.metric = metric;
   const country = params.get("country");
   if (country && latest.countries[country]) state.country = country;
 }

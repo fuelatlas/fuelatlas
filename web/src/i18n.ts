@@ -16,6 +16,21 @@ const de: Dict = {
   "metric.gross.help": "Was Autofahrerinnen und Autofahrer tatsächlich an der Zapfsäule zahlen.",
   "metric.tax_share.help": "Anteil von Steuern und Abgaben am Endpreis.",
   "metric.tax_total.help": "Steuern und Abgaben zusammen, je Liter.",
+  "metric.burden": "Belastung",
+  "explain.burden.title": "Was „Belastung“ hier heißt",
+  "explain.burden.body":
+    "Der Preis eines Liters an der Zapfsäule, geteilt durch das, was einer Person an einem Tag zur Verfügung steht. Zugrunde liegt das verfügbare Einkommen im Median — also netto: nach Abzug von Steuern und Sozialabgaben, wobei Renten und andere Sozialleistungen als Einkommen zählen. Der Haushaltsbetrag wird auf die Haushaltsgröße umgerechnet (erster Erwachsener 1,0; weitere Personen ab 14 Jahren 0,5; Kinder darunter 0,3). Eurostat EU-SILC, Bezugsjahr {year}.",
+  "explain.burden.formula": "Preis je Liter ÷ (Jahreseinkommen ÷ 365)",
+  "explain.burden.example": "Beispiel {country}:",
+  "explain.burden.reading":
+    "Ein Liter kostet dort also {value} dessen, was eine Person an einem Tag zur Verfügung hat. Zum Vergleich: in {other} sind es {othervalue}.",
+  "burden.income": "Nettoeinkommen (Median)",
+  "burden.perYear": "im Jahr",
+  "burden.perDay": "am Tag",
+  "explain.burden.missing":
+    "Für das Vereinigte Königreich veröffentlicht Eurostat keine Einkommen mehr; es bleibt bei dieser Darstellung ohne Farbe.",
+  "metric.burden.help":
+    "Was ein Liter an der Zapfsäule kostet, gemessen am verfügbaren Nettoeinkommen: Anteil eines Tageseinkommens. Medianeinkommen von Eurostat, Bezugsjahr {year}. Für das Vereinigte Königreich liegen keine Werte vor.",
   "part.net": "Produktpreis",
   "part.excise": "Energie-/Verbrauchsteuer",
   "part.other": "Sonstige Abgaben",
@@ -49,7 +64,7 @@ const de: Dict = {
   "sources": "Quellen",
   "caveat.title": "Zur Vergleichbarkeit",
   "caveat.body":
-    "Die Länder erheben ihre Preise unterschiedlich, und das begrenzt jeden Vergleich. 13 Staaten melden nach Absatzmenge gewichtete Mittelwerte, 14 ein ungewichtetes Mittel über die erfassten Tankstellen. Luxemburg meldet amtliche Höchstpreise — gezahlt wird weniger. In Irland liefert ein einziges Mineralölunternehmen den Landesdurchschnitt für Benzin und Diesel. Rabatte rechnen nur einzelne Länder heraus, und die Marktabdeckung reicht von rund 70 % bis nahezu vollständig. Ein Abstand von ein bis zwei Cent zwischen zwei Ländern kann daher allein aus der Erhebungsmethode stammen.",
+    "Die Länder erheben ihre Preise unterschiedlich, und das begrenzt jeden Vergleich. 13 Staaten melden nach Absatzmenge gewichtete Mittelwerte, 14 ein ungewichtetes Mittel über die erfassten Tankstellen. Luxemburg meldet amtliche Höchstpreise — gezahlt wird weniger. In Irland liefert ein einziges Mineralölunternehmen den Landesdurchschnitt für Benzin und Diesel. Rabatte rechnen nur einzelne Länder heraus, und die Marktabdeckung reicht von rund 70 % bis nahezu vollständig. Ein Abstand von ein bis zwei Cent zwischen zwei Ländern kann daher allein aus der Erhebungsmethode stammen. Für die Belastung gilt derselbe Vorbehalt ein zweites Mal: die Einkommen stammen aus EU-SILC, das die Mitgliedstaaten ebenfalls unterschiedlich erheben, und sie beziehen sich auf ein ganzes Jahr, die Preise auf eine Woche.",
   "caveat.link": "Methodik der einzelnen Länder bei der Kommission",
   "caveat.short":
     "Jedes Land ermittelt seine Preise anders — kleine Abstände zwischen zwei Ländern sagen daher wenig aus.",
@@ -83,6 +98,21 @@ const en: Dict = {
   "metric.gross.help": "What drivers actually hand over at the pump.",
   "metric.tax_share.help": "Share of taxes and duties in the final price.",
   "metric.tax_total.help": "Taxes and duties combined, per litre.",
+  "metric.burden": "Burden",
+  "explain.burden.title": "What “burden” means here",
+  "explain.burden.body":
+    "The price of one litre at the pump, divided by what one person has available on one day. The basis is median disposable income — net, that is: after taxes and social contributions, with pensions and other benefits counted as income. The household figure is divided by an adjusted headcount (first adult 1.0, each further person aged 14+ 0.5, each younger child 0.3). Eurostat EU-SILC, reference year {year}.",
+  "explain.burden.formula": "price per litre ÷ (annual income ÷ 365)",
+  "explain.burden.example": "Example {country}:",
+  "explain.burden.reading":
+    "So a litre there costs {value} of what one person has available in a day. For comparison, in {other} it is {othervalue}.",
+  "burden.income": "Median income, after tax",
+  "burden.perYear": "a year",
+  "burden.perDay": "a day",
+  "explain.burden.missing":
+    "Eurostat no longer publishes incomes for the United Kingdom, so it stays uncoloured on this metric.",
+  "metric.burden.help":
+    "What a litre at the pump costs measured against disposable income, after tax: the share of one day's income. Median income from Eurostat, reference year {year}. No figures are available for the United Kingdom.",
   "part.net": "Product price",
   "part.excise": "Excise duty",
   "part.other": "Other levies",
@@ -116,7 +146,7 @@ const en: Dict = {
   "sources": "Sources",
   "caveat.title": "On comparability",
   "caveat.body":
-    "Countries collect their prices in different ways, and that limits every comparison. 13 report averages weighted by the volume sold, 14 an unweighted mean across the stations they survey. Luxembourg reports official maximum prices — drivers pay less. In Ireland a single oil company supplies the national average for petrol and diesel. Only some countries strip out discounts, and market coverage ranges from about 70 % to nearly complete. A gap of one or two cents between two countries may therefore come from the method alone.",
+    "Countries collect their prices in different ways, and that limits every comparison. 13 report averages weighted by the volume sold, 14 an unweighted mean across the stations they survey. Luxembourg reports official maximum prices — drivers pay less. In Ireland a single oil company supplies the national average for petrol and diesel. Only some countries strip out discounts, and market coverage ranges from about 70 % to nearly complete. A gap of one or two cents between two countries may therefore come from the method alone. The burden metric carries the same caveat twice over: incomes come from EU-SILC, which member states also survey differently, and they cover a whole year where the prices cover a week.",
   "caveat.link": "Per-country methodology at the Commission",
   "caveat.short":
     "Every country works out its prices differently, so a small gap between two of them means little.",

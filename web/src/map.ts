@@ -282,7 +282,12 @@ export class EuropeMap {
    * Recolour every country. `values` is keyed by ISO code (absent = no data);
    * `average` is the EU-27 figure the diverging scale is anchored on.
    */
-  paint(values: Map<string, number>, average: number, label: (country: string) => string): void {
+  paint(
+    values: Map<string, number>,
+    average: number,
+    label: (country: string) => string,
+    bounds?: readonly number[],
+  ): void {
     for (const [code, element] of this.paths) {
       const value = values.get(code);
       if (value === undefined) {
@@ -290,7 +295,7 @@ export class EuropeMap {
         element.removeAttribute("fill");
       } else {
         element.setAttribute("class", "");
-        element.setAttribute("fill", tierColor(value, average));
+        element.setAttribute("fill", tierColor(value, average, bounds));
       }
       // The accessible name carries the number, so the map is readable without hover.
       element.setAttribute("aria-label", `${this.nameOf(code)}: ${label(code)}`);

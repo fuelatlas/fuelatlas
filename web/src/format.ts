@@ -32,6 +32,16 @@ export function euroPlain(perThousandLitres: number): string {
   }).format(perThousandLitres / 1000);
 }
 
+/** A plain euro amount — incomes, not per-litre prices. */
+export function euroAmount(value: number, digits = 0): string {
+  return new Intl.NumberFormat(locale(), {
+    style: "currency",
+    currency: "EUR",
+    minimumFractionDigits: digits,
+    maximumFractionDigits: digits,
+  }).format(value);
+}
+
 export function percent(fraction: number, digits = 1): string {
   return new Intl.NumberFormat(locale(), {
     style: "percent",
